@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Mukesh Motor Driving School - Gandhidham, Kutch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+        
+        body {
+            overflow-x: hidden;
+            min-height: 100vh;
+            transition: background-color 0.8s ease, color 0.5s ease;
+        }
+        
+        /* Day Mode (Default) */
+        body.day-mode {
+            background: linear-gradient(145deg, #0a4270 0%, #1e5491 30%, #3b6e9e 70%, #7aa3c2 100%);
+            color: #333;
+        }
+        
+        /* Night Mode */
+        body.night-mode {
+            background: linear-gradient(145deg, #0a1428 0%, #13203a 40%, #1b2c4a 80%, #253b5a 100%);
+            color: #fff;
+        }
+        
+        #dynamic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        /* ===== TOP RIGHT CONTAINER (MOBILE OPTIMIZED) ===== */
+        .top-right-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        
+        @media (min-width: 769px) {
+            .top-right-container {
+                top: 25px;
+                right: 25px;
+                gap: 15px;
+            }
+        }
+        
+        .dynamic-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            padding: 6px 12px;
+            border-radius: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            animation: logo-float 3s infinite alternate;
+            cursor: pointer;
+            min-height: 44px;
+        }
+        
+        .dynamic-logo:hover {
+            transform: scale(1.05);
+            border-color: #f39c12;
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.4);
+        }
+        
+        @keyframes logo-float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-5px); }
+        }
+        
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(145deg, #f39c12, #e67e22);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            border: 2px solid #fff;
+            animation: logo-icon-spin 10s linear infinite;
+        }
+        
+        @keyframes logo-icon-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo-text-main {
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .day-mode .logo-text-main { color: #fff; }
+        .night-mode .logo-text-main { color: #ffe082; }
+        
+        .logo-text-sub {
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+        .day-mode .logo-text-sub { color: #e3f2fd; }
+        .night-mode .logo-text-sub { color: #bbdefb; }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            padding: 6px 12px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            min-height: 44px;
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            border-color: #f39c12;
+            box-shadow: 0 8px 20px rgba(243, 156, 18, 0.3);
+        }
+        
+        .toggle-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.5s ease;
+        }
+        .day-mode .toggle-icon {
+            background: linear-gradient(145deg, #f39c12, #f1c40f);
+            color: #333;
+        }
+        .night-mode .toggle-icon {
+            background: linear-gradient(145deg, #34495e, #2c3e50);
+            color: #ffe082;
+        }
+        .toggle-text {
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .day-mode .toggle-text { color: #fff; }
+        .night-mode .toggle-text { color: #fff; }
+        
+        /* Spacer */
+        .header-spacer {
+            height: 70px;
+        }
+        @media (min-width: 769px) {
+            .header-spacer { height: 100px; }
+        }
+        
+        /* ===== BACKGROUND ANIMATIONS ===== */
+        .road-perspective {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35%;
+            background: #2c3e50;
+            overflow: hidden;
+        }
+        .road-surface {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #2c3e50, #34495e, #2c3e50);
+            animation: road-shimmer 8s infinite;
+        }
+        @keyframes road-shimmer {
+            0% { opacity: 1; }
+            50% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+        .road-lines {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: repeating-linear-gradient(90deg, #f1c40f, #f1c40f 20px, transparent 20px, transparent 40px);
+            transform: translateY(-50%);
+            animation: road-lines-move 3s linear infinite;
+            opacity: 0.8;
+        }
+        @keyframes road-lines-move {
+            0% { transform: translateY(-50%) translateX(0); }
+            100% { transform: translateY(-50%) translateX(-40px); }
+        }
+        
+        .realistic-car {
+            position: absolute;
+            bottom: 15%;
+            left: 15%;
+            width: 160px;
+            height: 70px;
+            animation: car-drive 25s linear infinite, car-bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            z-index: 10;
+        }
+        @media (max-width: 480px) {
+            .realistic-car { display: none; }
+        }
+        @keyframes car-drive {
+            0% { left: -200px; }
+            100% { left: 110%; }
+        }
+        @keyframes car-bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .car-body {
+            position: relative;
+            width: 140px;
+            height: 35px;
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            border-radius: 15px 25px 8px 8px;
+            animation: car-shake 0.5s infinite;
+        }
+        @keyframes car-shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(1px); }
+            75% { transform: translateX(-1px); }
+        }
+        .wheel-front, .wheel-rear {
+            position: absolute;
+            bottom: -8px;
+            width: 22px;
+            height: 22px;
+            background: #222;
+            border-radius: 50%;
+            border: 4px solid #333;
+            animation: wheel-spin 0.8s linear infinite;
+        }
+        @keyframes wheel-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .sun-realistic {
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #ffe082, #ffb300);
+            border-radius: 50%;
+            box-shadow: 0 0 30px #ffb300;
+            animation: sun-glow 4s infinite alternate;
+            transition: opacity 0.8s;
+        }
+        @keyframes sun-glow {
+            from { box-shadow: 0 0 20px #ffb300; }
+            to { box-shadow: 0 0 40px #ffb300; }
+        }
+        .moon-realistic {
+            position: absolute;
+            top: 12%;
+            right: 6%;
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, #f5f0e1, #e0e0e0);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #fff9c4;
+            animation: moon-glow 4s infinite alternate;
+            opacity: 0;
+            transition: opacity 0.8s;
+        }
+        @keyframes moon-glow {
+            from { box-shadow: 0 0 10px #fff9c4; }
+            to { box-shadow: 0 0 30px #fff9c4; }
+        }
+        .night-mode .sun-realistic { opacity: 0; }
+        .night-mode .moon-realistic { opacity: 1; }
+        
+        .star-realistic {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
+        }
+        .night-mode .star-realistic {
+            opacity: 0.6;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.2; transform: scale(1); }
+        }
+        
+        /* ===== MAIN CONTENT ANIMATIONS ===== */
+        .content {
+            position: relative;
+            z-index: 100;
+            padding: 15px 15px 30px;
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            font-weight: 800;
+            animation: slideInDown 1s;
+        }
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .logo-container {
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 15px;
+            margin: 0 auto 25px;
+            max-width: 90%;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: zoomIn 0.8s;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .feature-card {
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 20px 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.4s, box-shadow 0.4s;
+            animation: cardFadeIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .feature-card:nth-child(1) { animation-delay: 0.2s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.6s; }
+        @keyframes cardFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Packages */
+        .packages-section {
+            padding: 0 15px;
+            margin: 30px 0;
+            animation: fadeInUp 0.8s 0.3s both;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .package-card {
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            transition: transform 0.4s, box-shadow 0.4s;
+            animation: cardPulse 2s infinite alternate;
+        }
+        .package-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation-play-state: paused;
+        }
+        @keyframes cardPulse {
+            0% { box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+            100% { box-shadow: 0 10px 25px rgba(243,156,18,0.3); }
+        }
+        
+        .package-badge {
+            position: absolute;
+            top: 10px;
+            right: -15px;
+            background: linear-gradient(145deg, #f39c12, #e67e22);
+            color: white;
+            font-weight: 700;
+            font-size: 0.7rem;
+            padding: 4px 25px;
+            transform: rotate(45deg);
+            animation: badgeGlow 1.5s infinite;
+        }
+        @keyframes badgeGlow {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+            100% { filter: brightness(1); }
+        }
+        
+        .package-button {
+            padding: 12px;
+            font-size: 1rem;
+            min-height: 48px;
+            border-radius: 40px;
+            width: 100%;
+            border: none;
+            background: linear-gradient(145deg, #ff6b4a, #e64c2e);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+            animation: buttonPulse 2s infinite;
+        }
+        .package-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(230,76,46,0.5);
+            filter: brightness(1.1);
+            animation-play-state: paused;
+        }
+        @keyframes buttonPulse {
+            0% { box-shadow: 0 5px 15px rgba(230,76,46,0.3); }
+            50% { box-shadow: 0 8px 25px rgba(230,76,46,0.6); }
+            100% { box-shadow: 0 5px 15px rgba(230,76,46,0.3); }
+        }
+        
+        /* Address Section */
+        .contact-section {
+            padding: 0 15px;
+            margin: 30px 0;
+            animation: fadeInLeft 0.8s 0.5s both;
+        }
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .address-container {
+            display: grid;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.4s, box-shadow 0.4s;
+        }
+        .address-container:hover {
+            transform: scale(1.01);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .address-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(145deg, #f39c12, #e67e22);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            border: 2px solid #fff;
+            animation: iconSpin 10s linear infinite;
+        }
+        @keyframes iconSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .address-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            transition: transform 0.3s;
+        }
+        .address-line:hover {
+            transform: translateX(5px);
+            color: #f39c12;
+        }
+        
+        .direction-btn {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            min-height: 44px;
+            border: none;
+            border-radius: 40px;
+            background: #4285F4;
+            color: white;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .direction-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(66,133,244,0.4);
+        }
+        
+        .contact-item {
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.4s, box-shadow 0.4s;
+            animation: contactPop 0.6s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .contact-item:nth-child(1) { animation-delay: 0.6s; }
+        .contact-item:nth-child(2) { animation-delay: 0.8s; }
+        .contact-item:nth-child(3) { animation-delay: 1s; }
+        @keyframes contactPop {
+            to { opacity: 1; transform: scale(1); }
+        }
+        .contact-item:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .business-hours {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.8s 0.7s both;
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Modal Animation */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+            padding: 10px;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .booking-modal {
+            width: 100%;
+            max-width: 400px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            padding: 20px;
+            background: white;
+            color: #333;
+            transform: scale(0.7);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .night-mode .booking-modal {
+            background: #1e2b3a;
+            color: #fff;
+        }
+        .modal-overlay.active .booking-modal {
+            transform: scale(1);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            transition: transform 0.3s;
+        }
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+        
+        .submit-btn {
+            padding: 14px;
+            font-size: 1.1rem;
+            min-height: 48px;
+            border-radius: 40px;
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .submit-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(39,174,96,0.4);
+        }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        footer {
+            padding: 20px 15px;
+            font-size: 0.85rem;
+            text-align: center;
+            animation: fadeIn 1s 1.2s both;
+        }
+    </style>
+</head>
+<body class="day-mode">
+    <div class="top-right-container">
+        <div class="dynamic-logo" id="dynamicLogo">
+            <div class="logo-icon">🚗</div>
+            <div class="logo-text">
+                <span class="logo-text-main">MUKESH</span>
+                <span class="logo-text-sub">DRIVING SCHOOL</span>
+            </div>
+        </div>
+        <div class="theme-toggle" id="themeToggle">
+            <div class="toggle-icon" id="toggleIcon">☀️</div>
+            <div class="toggle-text" id="toggleText">DAY</div>
+        </div>
+    </div>
+    
+    <div class="header-spacer"></div>
+    
+    <div id="dynamic-background">
+        <div class="road-perspective">
+            <div class="road-surface"></div>
+            <div class="road-lines"></div>
+        </div>
+        <div class="sun-realistic"></div>
+        <div class="moon-realistic"></div>
+        <div class="realistic-car">
+            <div class="car-body">
+                <div class="wheel-front"></div>
+                <div class="wheel-rear"></div>
+            </div>
+            <div class="driving-school-sign">MUKESH</div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <h1>MUKESH MOTOR</h1>
+        <p class="tagline">Driving School Since 2005</p>
+        <div class="logo-container">
+            <div class="logo-text">DRIVING SCHOOL</div>
+            <div class="logo-subtext">100% SUCCESS • RTO APPROVED</div>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card"><h3>🏆 Expert Trainers</h3><p>15+ years exp. • RTO certified</p></div>
+            <div class="feature-card"><h3>🕒 20 Days Course</h3><p>6 KM/day • Theory + Practical</p></div>
+            <div class="feature-card"><h3>🚗 Modern Fleet</h3><p>Manual & Automatic • AC cars</p></div>
+        </div>
+    </div>
+    
+    <div class="packages-section">
+        <h2 class="section-title">🎯 PACKAGES</h2>
+        <p class="section-subtitle">20 Days • 6 KM/Day</p>
+        <div class="packages-grid">
+            <div class="package-card">
+                <h3 class="package-name">BASIC</h3>
+                <div class="package-highlight">20 Days • 6 KM/Day</div>
+                <ul class="package-features">
+                    <li>✓ 20 Days (1 Hour Daily)</li>
+                    <li>✓ 120 KM Total</li>
+                    <li>✓ Basic Rules & Parking</li>
+                </ul>
+                <div class="package-price">₹4,999</div>
+                <button class="package-button" onclick="openBookingModal('BASIC', 4999)">BOOK</button>
+            </div>
+            <div class="package-card">
+                <div class="package-badge">POPULAR</div>
+                <h3 class="package-name">STANDARD</h3>
+                <div class="package-highlight">20 Days + Highway</div>
+                <ul class="package-features">
+                    <li>✓ 20 Days (1.5 Hour Daily)</li>
+                    <li>✓ Highway Sessions</li>
+                    <li>✓ RTO Included</li>
+                </ul>
+                <div class="package-price">₹7,999</div>
+                <button class="package-button" onclick="openBookingModal('STANDARD', 7999)">BOOK</button>
+            </div>
+            <div class="package-card">
+                <h3 class="package-name">PREMIUM</h3>
+                <div class="package-highlight">20 Days + All</div>
+                <ul class="package-features">
+                    <li>✓ 20 Days (2 Hours Daily)</li>
+                    <li>✓ Night + Highway</li>
+                    <li>✓ License Package</li>
+                </ul>
+                <div class="package-price">₹12,999</div>
+                <button class="package-button" onclick="openBookingModal('PREMIUM', 12999)">BOOK</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="contact-section">
+        <h2 class="section-title">📍 VISIT OUR SCHOOL</h2>
+        <div class="address-container">
+            <div class="address-card">
+                <div class="address-header">
+                    <div class="address-icon">🏢</div>
+                    <div class="address-title">MUKESH MOTOR</div>
+                </div>
+                <div class="address-line"><i>📌</i> PLOT NO : 326</div>
+                <div class="address-line"><i>📍</i> WARD 12/B, MADHAV CHEMBERS</div>
+                <div class="address-line"><i>🏙️</i> GANDHIDHAM - KUTCH</div>
+                <div class="address-line"><i>📮</i> <span class="address-pincode">370-201</span></div>
+                <div style="margin-top:15px; background:rgba(243,156,18,0.1); padding:10px; border-radius:10px;">
+                    <strong>🏁 Landmark:</strong> Opp. Gandhidham Railway Station, Near Bus Depot
+                </div>
+            </div>
+            <div class="map-container">
+                <div>
+                    <div class="map-icon">🗺️</div>
+                    <div>Madhav Chembers</div>
+                    <button class="direction-btn google">Google Maps</button>
+                </div>
+            </div>
+        </div>
+        <div class="contact-info-grid">
+            <div class="contact-item"><div class="contact-icon">📞</div><div>+91 98765 43210</div><div>+91 98234 56789</div></div>
+            <div class="contact-item"><div class="contact-icon">✉️</div><div>info@mukeshmotor.com</div></div>
+            <div class="contact-item"><div class="contact-icon">⏰</div><div>6 AM - 8 PM</div><div>Mon-Sat</div></div>
+        </div>
+        <div class="business-hours">
+            <div class="hours-icon">🕒</div>
+            <div class="hours-text">7 Days a Week</div>
+            <div class="hours-highlight">Book Now</div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2024 Mukesh Motor Driving School | RTO: GJ-04-DS-7892</p>
+        <p>PLOT 326, WARD 12/B, MADHAV CHEMBERS, GANDHIDHAM, KUTCH 370201</p>
+    </footer>
+    
+    <div class="modal-overlay" id="bookingModal">
+        <div class="booking-modal">
+            <div class="modal-header">
+                <h2 id="modalPackageTitle">📅 Book Package</h2>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleText = document.getElementById('toggleText');
+        const body = document.body;
+        
+        const savedTheme = localStorage.getItem('theme') || 'day-mode';
+        body.className = savedTheme;
+        updateToggleUI();
+        generateStars();
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('day-mode');
+            body.classList.toggle('night-mode');
+            const newTheme = body.classList.contains('day-mode') ? 'day-mode' : 'night-mode';
+            localStorage.setItem('theme', newTheme);
+            updateToggleUI();
+            generateStars();
+        });
+        
+        function updateToggleUI() {
+            if (body.classList.contains('day-mode')) {
+                toggleIcon.textContent = '☀️';
+                toggleText.textContent = 'DAY';
+            } else {
+                toggleIcon.textContent = '🌙';
+                toggleText.textContent = 'NIGHT';
+            }
+        }
+        
+        function generateStars() {
+            const bg = document.getElementById('dynamic-background');
+            document.querySelectorAll('.star-realistic').forEach(s => s.remove());
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-realistic';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 30 + 'vh';
+                star.style.width = (Math.random() * 2 + 1) + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                bg.appendChild(star);
+            }
+        }
+        
+        const modal = document.getElementById('bookingModal');
+        const modalBody = document.getElementById('modalBody');
+        const modalTitle = document.getElementById('modalPackageTitle');
+        
+        function openBookingModal(pkg, price) {
+            modalTitle.innerText = `📅 Book ${pkg}`;
+            modalBody.innerHTML = `
+                <div style="text-align:center; margin-bottom:15px;">
+                    <p style="font-size:1.5rem; color:#f39c12;">${pkg} PACKAGE</p>
+                    <p style="font-size:2rem; color:#27ae60;">₹${price}</p>
+                </div>
+                <form id="bookingForm" onsubmit="submitBooking(event)">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="name" class="form-input" required>
+                        <div class="error-message" id="nameError">Required</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" id="phone" class="form-input" pattern="[0-9]{10}" required>
+                            <div class="error-message" id="phoneError">10 digits</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="email" class="form-input" required>
+                            <div class="error-message" id="emailError">Valid email</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date *</label>
+                            <input type="date" id="date" class="form-input" required min="${new Date().toISOString().split('T')[0]}">
+                            <div class="error-message" id="dateError">Future date</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Batch</label>
+                            <select id="batch" class="form-input">
+                                <option>Morning</option>
+                                <option>Day</option>
+                                <option>Evening</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">CONFIRM</button>
+                </form>
+            `;
+            modal.classList.add('active');
+            
+            document.getElementById('name').addEventListener('input', validate);
+            document.getElementById('phone').addEventListener('input', validate);
+            document.getElementById('email').addEventListener('input', validate);
+            document.getElementById('date').addEventListener('change', validate);
+        }
+        
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+        
+        function validate() {
+            const name = document.getElementById('name')?.value.trim();
+            const phone = document.getElementById('phone')?.value.trim();
+            const email = document.getElementById('email')?.value.trim();
+            const date = document.getElementById('date')?.value;
+            
+            let ok = true;
+            
+            if (!name) { showError('nameError'); ok = false; } else hideError('nameError');
+            
+            const phoneOk = phone && /^[0-9]{10}$/.test(phone);
+            if (!phoneOk) { showError('phoneError'); ok = false; } else hideError('phoneError');
+            
+            const emailOk = email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            if (!emailOk) { showError('emailError'); ok = false; } else hideError('emailError');
+            
+            if (!date) { showError('dateError'); ok = false; } else {
+                const selected = new Date(date);
+                const today = new Date(); today.setHours(0,0,0,0);
+                if (selected < today) { showError('dateError'); ok = false; } else hideError('dateError');
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = !ok;
+            return ok;
+        }
+        
+        function showError(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+        }
+        function hideError(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        }
+        
+        function submitBooking(e) {
+            e.preventDefault();
+            if (!validate()) return;
+            
+            const name = document.getElementById('name').value;
+            modalBody.innerHTML = `
+                <div class="success-message">
+                    <div style="font-size:4rem;">🎉</div>
+                    <h3>Booking Confirmed!</h3>
+                    <p>Thank you ${name}</p>
+                    <button class="submit-btn" onclick="closeModal()">Close</button>
+                </div>
+            `;
+        }
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        document.getElementById('dynamicLogo').addEventListener('click', () => {
+            alert('Welcome to Mukesh Motor Driving School, Gandhidham!');
+        });
+    </script>
+</body>
+</html>
